@@ -14,47 +14,64 @@ namespace SRPerfectTracker
         private SRLogger logger;
         private IStageEvents listener;
         private GameControlManager gameControlManager = null;
+        StageEvents stageEvents;
 
         public StageEventHandler(SRLogger logger, IStageEvents eventListener)
         {
             this.logger = logger;
             this.listener = eventListener;
+
+            stageEvents = new StageEvents();
+            stageEvents.OnSongStart = new UnityEvent();
+            stageEvents.OnSongEnd = new UnityEvent();
+            stageEvents.OnNoteHit = new UnityEvent();
+            stageEvents.OnNoteFail = new UnityEvent();
+            stageEvents.OnEnterSpecial = new UnityEvent();
+            stageEvents.OnCompleteSpecial = new UnityEvent();
+            stageEvents.OnFailSpecial = new UnityEvent();
+        }
+
+        public void RemoveEvents()
+        {
+            if (stageEvents != null)
+            {
+                stageEvents.OnSongStart.RemoveListener(listener.OnSongStart);
+                stageEvents.OnSongEnd.RemoveListener(listener.OnSongEnd);
+                stageEvents.OnNoteHit.RemoveListener(listener.OnNoteHit);
+                stageEvents.OnNoteFail.RemoveListener(listener.OnNoteFail);
+                stageEvents.OnEnterSpecial.RemoveListener(listener.OnEnterSpecial);
+                stageEvents.OnCompleteSpecial.RemoveListener(listener.OnCompleteSpecial);
+                stageEvents.OnFailSpecial.RemoveListener(listener.OnFailSpecial);
+            }
+        }
+
+        private void AddEvents()
+        {
+            if (stageEvents != null)
+            {
+                stageEvents.OnSongStart.AddListener(listener.OnSongStart);
+                stageEvents.OnSongEnd.AddListener(listener.OnSongEnd);
+                stageEvents.OnNoteHit.AddListener(listener.OnNoteHit);
+                stageEvents.OnNoteFail.AddListener(listener.OnNoteFail);
+                stageEvents.OnEnterSpecial.AddListener(listener.OnEnterSpecial);
+                stageEvents.OnCompleteSpecial.AddListener(listener.OnCompleteSpecial);
+                stageEvents.OnFailSpecial.AddListener(listener.OnFailSpecial);
+            }
         }
 
         public void SetupEvents(GameControlManager gcm)
         {
-            if (gameControlManager == gcm)
-            {
-                logger.Msg($"GCM matches. Null? {gcm == null}");
-                return;
-            }
-
             if (gcm == null)
             {
                 logger.Msg("GCM null, skipping setup");
                 return;
             }
 
-            gameControlManager = gcm;
             try
             {
                 logger.Msg("Adding stage events!");
-                StageEvents stageEvents = new StageEvents();
-                stageEvents.OnSongStart = new UnityEvent();
-                stageEvents.OnSongStart.AddListener(listener.OnSongStart);
-                stageEvents.OnSongEnd = new UnityEvent();
-                stageEvents.OnSongEnd.AddListener(listener.OnSongEnd);
-                stageEvents.OnNoteHit = new UnityEvent();
-                stageEvents.OnNoteHit.AddListener(listener.OnNoteHit);
-                stageEvents.OnNoteFail = new UnityEvent();
-                stageEvents.OnNoteFail.AddListener(listener.OnNoteFail);
-                stageEvents.OnEnterSpecial = new UnityEvent();
-                stageEvents.OnEnterSpecial.AddListener(listener.OnEnterSpecial);
-                stageEvents.OnCompleteSpecial = new UnityEvent();
-                stageEvents.OnCompleteSpecial.AddListener(listener.OnCompleteSpecial);
-                stageEvents.OnFailSpecial = new UnityEvent();
-                stageEvents.OnFailSpecial.AddListener(listener.OnFailSpecial);
-
+                RemoveEvents();
+                AddEvents();
                 GameControlManager.UpdateStageEventList(stageEvents);
             }
             catch (Exception e)

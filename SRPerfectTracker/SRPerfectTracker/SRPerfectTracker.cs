@@ -74,6 +74,7 @@ namespace SRPerfectTracker
             {
                 scoreTextField.outlineColor = Color.white;
                 scoreTextField.outlineWidth = 0;
+                stageEventHandler.RemoveEvents();
             }
         }
 
