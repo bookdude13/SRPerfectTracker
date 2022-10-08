@@ -37,11 +37,12 @@ namespace SRPerfectTracker
             if (scene.IsStage())
             {
                 var gcm = GameControlManager.s_instance;
-
-                stageEventHandler.SetupEvents(gcm);
-
-                var scoreManagerTraverse = Traverse.Create(gcm?.ScoreManager);
-                scoreTextField = scoreManagerTraverse?.Field<TMPro.TextMeshPro>("m_scoreTextField")?.Value;
+                if (gcm != null)
+                {
+                    stageEventHandler.SetupEvents();
+                    var scoreManagerTraverse = Traverse.Create(gcm.ScoreManager);
+                    scoreTextField = scoreManagerTraverse?.Field<TMPro.TextMeshPro>("m_scoreTextField")?.Value;
+                }
             }
         }
 
@@ -74,7 +75,7 @@ namespace SRPerfectTracker
             {
                 scoreTextField.outlineColor = Color.white;
                 scoreTextField.outlineWidth = 0;
-                stageEventHandler.RemoveEvents();
+                stageEventHandler.RemoveListeners();
             }
         }
 
